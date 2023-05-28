@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Admin Home Page</title>
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<link rel="stylesheet" type="text/css" href="css/mst.css" />
+</head>
+
+
+<body style="font-family: sans-serif; font-size: 16px;">
+	<header id="masthead" class="site-header">
+    	<div class="site-branding">
+        	<h1 class="site-title">
+        		<a href="https://colinwalker.blog/php-mst/" rel="home">
+	          		<span class="p-name">
+	          			<%- myName %>	          		</span>
+          		</a>
+        	</h1>
+      	</div>
+  	</header>
+  	
+  	<div id="wrapper" style="width: 100vw; position: absolute; left: 0px;">
+    	<div id="page" class="site">
+        	<div id="primary" class="content-area">
+	    		<main id="main" class="site-main today-container">
+
+					<nav class="mst">
+			        	<ul>
+			        		<li><a href="<%- url %>">Home</a></li>
+				        	<li><a href="<%- url %>about">About</a></li>
+			        		<li><a href="<%- urlFeed %>">Feed</a></li>
+			        		<li><a href="https://github.com/andysylvester/MyStatusToolDemo">Github Repo</a></li>
+			        	</ul>
+			        </nav>
+    <br>
+	<form action="/admin" method="post">
+  	<!-- user input-->
+  	<textarea  type="text" name="username" placeholder='Enter your post here...' rows="8" cols="80"></textarea>
+  	<!-- submit button -->
+	<br>
+  	<input type="submit" value="Post your update!">
+	<br>
+	</form>
+	<br />
+         <% for(var i=0; i < data.length; i++) { %>
+		
+<article class="h-entry hentry mst">
+<div class="section">
+<div class="entry-content e-content">
+<div class="photo-box"><div class="box-content"><div><span><a href="<%=data[i].feedLink%>">N</a></span></div></div></div>
+<div class="pagePost">
+<div class="pagePostTop">
+<span class="pagePostLink"><a href="<%=data[i].feedLink%>"><%=data[i].feedTitle%></a></span><br>
+<div class="contentDiv" ><p><%-data[i].feedItem.description%></p></div>
+<a class="cd" href="<%=data[i].feedItem.link%>"><%=data[i].feedItem.pubDate%></a>
+</div></div>
+<div class="clear"></div>
+</div>
+</div>
+</article>
+				    <% } %>
+
+</body>
+</html>

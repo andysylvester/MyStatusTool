@@ -1,0 +1,36 @@
+{
+	"host": "http://fedwiki.andysylvester.com:2001",
+	"subs": [
+		"https://colinwalker.blog/php-mst/feed.xml",
+		"http://oldschool.scripting.com/sylvester.andy@gmail.com/rss.xml",
+		"http://data.feedland.org/feeds/davewiner.xml",
+		"https://mst.andysylvester.com/feed.xml",
+		"http://data.feedland.org/feeds/KenSmith.xml",
+		"http://data.feedland.org/feeds/AndySylvester99.xml"
+	],
+	"baseURL": "http://fedwiki.andysylvester.com:2001/",
+	"myDomain": "fedwiki.andysylvester.com",
+	"myPort": 2001,
+	"myName": "Andy Sylvester",
+	"feedURL": "http://fedwiki.andysylvester.com:2001/feed/rss.xml",
+    "headElements":
+		{
+			"title": "Andy's MyStatusTool feed",
+			"link": "http://fedwiki.andysylvester.com:2001",
+			"description": "Trying out the daverss package.",
+			"language": "en-us",
+			"generator": "My Status Tool",
+			"docs": "http://cyber.law.harvard.edu/rss/rss.html",
+			"twitterScreenName": "AndySylvester99",
+			"facebookPageName": "",
+			"maxFeedItems": 25,
+			"flRssCloudEnabled": true,
+			"rssCloudDomain": "rpc.rsscloud.io",
+			"rssCloudPort": 5337,
+			"rssCloudPath": "/pleaseNotify",
+			"rssCloudRegisterProcedure": "",
+			"rssCloudProtocol": "http-post"
+		}
+	
+	}
+

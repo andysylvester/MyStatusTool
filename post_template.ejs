@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+	<title>My Status Tool</title>
+<link rel="stylesheet" type="text/css" href="../css/style.css" />
+<link rel="stylesheet" type="text/css" href="../css/mst.css" />
+</head>
+
+<body>
+<body style="font-family: sans-serif; font-size: 16px;">
+	<header id="masthead" class="site-header">
+    	<div class="site-branding">
+        	<h1 class="site-title">
+        		<a href="http://fedwiki.andysylvester.com:2001" rel="home">
+	          		<span class="p-name">
+                       <% if (typeof model != "undefined" && model) { %>
+                           <p><%- model.name %></p>
+                       <% } %>
+						</span>
+          		</a>
+        	</h1>
+      	</div>
+  	</header>
+  	
+  	<div id="wrapper" style="width: 100vw; position: absolute; left: 0px;">
+    	<div id="page" class="site">
+        	<div id="primary" class="content-area">
+	    		<main id="main" class="site-main today-container">
+
+					<nav class="mst">
+			        	<ul>
+                          <% if (typeof model != "undefined" && model) { %>
+			        		<li><a href="<%- model.baseURL %>">Home</a></li>
+				        	<li><a href="<%- model.baseURL %>about">About</a></li>
+			        		<li><a href="<%- model.feedURL %>">Feed</a></li>
+                          <% } %>
+			        		<li><a href="https://github.com/andysylvester/MyStatusToolDemo">Github Repo</a></li>
+			        	</ul>
+			        </nav>
+    <br>
+
+<article class="h-entry hentry mst">
+<div class="section">
+<div class="entry-content e-content">
+<div class="pagePost">
+<div class="pagePostTop">
+<div class="contentDiv" >
+<% if (typeof model != "undefined" && model) { %>
+  <p><%- model.content %></p>
+<% } %>
+
+</div>
+</div></div>
+<div class="clear"></div>
+</div>
+</div>
+</article>
+
+</body>
+</html>

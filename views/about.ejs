@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+	<title>Index Test Home Page</title>
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<link rel="stylesheet" type="text/css" href="css/mst.css" />
+</head>
+
+<body>
+<body style="font-family: sans-serif; font-size: 16px;">
+	<header id="masthead" class="site-header">
+    	<div class="site-branding">
+        	<h1 class="site-title">
+        		<a href="http://fedwiki.andysylvester.com:2001" rel="home">
+	          		<span class="p-name">
+	          			About My Status Tool	          		</span>
+          		</a>
+        	</h1>
+      	</div>
+  	</header>
+  	
+  	<div id="wrapper" style="width: 100vw; position: absolute; left: 0px;">
+    	<div id="page" class="site">
+        	<div id="primary" class="content-area">
+	    		<main id="main" class="site-main today-container">
+
+					<nav class="mst">
+			        	<ul>
+			        		<li><a href="<%- url %>">Home</a></li>
+				        	<li><a href="<%- url %>about">About</a></li>
+			        		<li><a href="<%- urlFeed %>">Feed</a></li>
+			        		<li><a href="https://github.com/andysylvester/MyStatusToolDemo">Github Repo</a></li>
+			        	</ul>
+			        </nav>
+		
+<article class="h-entry hentry mst">
+<div class="section">
+<div class="entry-content e-content">
+								<h2>What is MyStatusTool</h2>
+								<p>
+									MyStatusTool is a Node.js implementation of <a href="http://fedwiki.andysylvester.com:443/">My Status Tool</a> by Andy Sylvester.
+									MyStatusTool uses the same user interface as <a href="https://colinwalker.blog/php-mst/">MST-PHP</a>, a PHP implementation of My Status Tool by Colin Walker.
+								</p>
+								<p>
+									<blockquote>
+									My Status Tool is an application that provides the basic posting and reading functionality within Twitter, but using RSS and rssCloud as the enabling technologies.
+									</blockquote>
+								</p>
+								<p>
+									MyStatusTool has the following functionality:
+									<ul>
+										<li>make a short post (although there is technically no limit)</li>
+										<li>add posts to a local file (no database required) and build an RSS feed </li>
+										<li>each post has a page</li>
+										<li>posts are sorted by timestamp along with those from any other subscribed feeds</li>
+										<li>local storage for posts from subscribed RSS feeds</li>
+										<li>uses rssCloud to subscribe to other rssCloud-enabled feeds for fast updates</li>
+									</ul>
+								</p>
+								<p>
+									Setup of MyStatusTool is through the use of a configuration file. This file needs to be edited prior to starting the app.
+								</p>
+								<p>
+									MyStatusTool doesn't auto-refresh but you can manually reload the page to get the latest posts. Posts made using MyStatusTool will be added automatically.
+								</p>
+								<p>
+								<h3>To do:</h3>
+								<ul>
+									<li>an admin page for feed subscription & removal and other settings</li>
+								</ul>
+								</p>
+</div></div>
+<div class="clear"></div>
+</div>
+</div>
+</article>
+
+</body>
+</html>
