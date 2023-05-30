@@ -136,7 +136,45 @@ This will create a folder called MyStatusTool
    ```sh
    npm install
    ```
-4. The app uses a [configuration file](https://github.com/andysylvester/MyStatusTool/blob/main/config.json) to set parameters needed for the app and for creating the RSS feed. The default parameters are for the demo app, this file should be updated for the parameters for the server where the app runs.
+4. The app uses a [configuration file](https://github.com/andysylvester/MyStatusTool/blob/main/config.json) to set parameters needed for the app and for creating the RSS feed. The default parameters are for the demo app, this file should be updated for the parameters for the server where the app runs. Here is a list of the items that should be reviewed/updated:
+
+host: This is the URL of where your MyStatusTool will be accessed. If you are running on a port other than 80, you should include it in the URL.
+
+subs: This is a Javascript array of the list of RSS feeds you are subscribing to. These should be feeds that support rssCloud for notification of updates. To check this, look at a RSS feed you are interested in and do a search for the <cloud> element. Here is an example:
+
+   ```sh
+   <cloud domain="rpc.rsscloud.io" port="5337" path="/pleaseNotify" registerProcedure="" protocol="http-post" />
+   ```
+
+If there is no <cloud> element, MyStatusTool will not get notification of feed updates, and will not display any updates.
+
+The structure of the subs array is that each feed URL needs to have double-quotes at the beginning and end of the URL. If the URL is not the last URL in the array, there needs to be a comma at the end of the line to indicate that there are additional elements in the array. A comma is not needed for the last URL in the array.
+
+baseURL: This is a text string used to create URLs for feed elements for the RSS feed created by MyStatusTool posts. This should be the same string as the host entry in config.json.
+
+myDomain: This is the top-level domain of the URL where your MyStatusTool will be accessed. This should be consistent with the URLs in the host and baseURL entries in config.json.
+
+myPort: This is the port number of the URL where your MyStatusTool will be accessed. Since this is a number, there are no quotes around the number, and there should be a comma at the end of the line.
+
+myName: This is a text string that will appear at the top of the main page and admin page when MyStatusTool is running. The string does not have to be your name, if you wish. If you do not want anything to appear, leave the string as “” with no spaces.
+
+feedURL: This is the URL of the RSS feed created for MyStatusTool posts. The main URL portion should match the URLs in the host and baseURL entries.  The portion at the end (/feed/rss.xml) should be left as-is.
+
+headElements: This is a Javascript object with elements used to create the <head> element in the RSS feed created for MyStatusTool posts. The following elements should be reviewed and updated to be consistent with the host and baseURL entries:
+
+title: This text string is the title of the overall feed, and will appear in RSS readers. You should update this to be whatever you want.
+
+link: This text string is the URL for the site, and should match the host and baseURL entries.
+
+description: This text string is a description of the site. You can update this to be whatever you want.
+
+twitterScreenName: If you have a Twitter account, you can enter your screen name here. If you do not want anything to appear, leave the string as “” with no spaces.
+
+facebookPageName: If you have a Facebook account, you can enter your page name here. If you do not want anything to appear, leave the string as “” with no spaces.
+
+When you have finished updating config.json, make sure that the updated version has been uploaded to the server running your instance of MyStatusTool.
+
+There is also a setting for username and password in the file app.js. MyStatusTool uses Basic Authentication to provide a way for the user to log in and make posts. These values are stored on line 59 in app.js. PLEASE update these to some other values and make sure that the updated version has been uploaded to the server running your instance of MyStatusTool.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -151,13 +189,15 @@ To start the app, enter the following command in a terminal window in the app fo
    node app.js
    ```
 
-The app will start on port 2001 by default. Open a tab in a web browser and enter the URL of the server with ":2001" at the end of the URL (or the port specified in the config.json file). The app will read the RSS feeds listed in the config.json file and display their current content. 
+The app will start on port 2001 by default. Open a tab in a web browser and enter the URL of the server with ":2001" at the end of the URL (or the port specified in the config.json file). The app will display some starter content and subscribe to the RSS feeds listed in the config.json file. When those RSS feeds update, new content will be added to the top of the page. Click the Refresh button to see new content.
 
-To use the app, enter some text in the text field at the top of the window and click the button. The post will appear below the "Subscribed feeds" area, the RSS feed will be updated, and a page will be created for the new post. You can click on the RSS Feed item in the menu bar to see the list of items.
+The menu bar at the top of the screen has four entries: Home, About, Feed, and Github Repo. Clicking on the Home part of the menu bar will load the main page. Clicking on About brings up a page with information about MyStatusTool. Clicking on Feed shows the RSS feed for your posts within MyStatusTool. Clicking on Github Repo opens the main page on Github for the MyStatusTool application, which contains installation and usage instructions.
 
-Again, you should see the app running as in the screenshot shown earlier on this page.
+To start making posts in MyStatusTool, click on the circle with an “m” in the upper right corner of the screen. This will bring up the admin page, and a dialog box will open asking for a username and password. Enter the username and password in app.js and click the OK button. The page will update to show a text area and a button to submit posts. HTML can be included in the text entered in the text area (such as links and styling). When you make a post, the post will appear at the top of the screen. In the lower-left corner of the post, the timestamp will be a link to the page for that post. If other subscribed feeds have updated, their posts will appear as well as your post.
 
-You can see the app running <a href="http://fedwiki.andysylvester.com:443/">here</a> and give it a try! Also, feel free to install a copy on a server yourself!
+## Other MyStatusTool versions
+
+This version of MyStatusTool is a Node.js application using the Express web app framework. If you do not have a Linux server account to run this app, there is another implementation in PHP ([MST-PHP](https://github.com/colin-walker/PHP-MST), written by [Colin Walker](https://colinwalker.blog/php-mst/)) which can run on most generic web hosting setups.
 
 ## Customizing The App
 
