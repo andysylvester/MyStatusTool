@@ -101,6 +101,14 @@ app.post('/admin', auth, (req, res) => {
 	let rawdata = fs.readFileSync('myFeedItems.json');
     let data = JSON.parse(rawdata);
 	myFeedItems = data;
+	console.log("Input text from Medium Editor = ", myText.first);
+	// Remove paragraph tags from Medium Editor text
+	testString = newItem.text;
+	var newstring1medium = testString.replace('<p>', '');
+	var newstring2medium = newstring1medium.replace('</p>', '');
+	newItem.text = newstring2medium;
+	console.log("Cleaned up RSS text = ", newItem.text);
+
 
 	newItem.link = config.baseURL + timeString;
 	newItem.guid.value = config.baseURL + timeString;
@@ -108,8 +116,8 @@ app.post('/admin', auth, (req, res) => {
 	// newItem.guid.value = "http://fedwiki.andysylvester.com:443/" + timeString;
 	console.log("newItem.link = ", newItem.link);
 	console.log("newItem.guid = ", newItem.guid.value);
-	newItem.text = req.body.username;
-	console.log("newItem.text = ", newItem.text);
+	// newItem.text = req.body.username;
+	// console.log("newItem.text = ", newItem.text);
 	
 	myFeedItems.unshift(newItem);
 	// console.log(myFeedItems);

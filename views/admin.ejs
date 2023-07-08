@@ -5,6 +5,8 @@
 	<title>Admin Home Page</title>
 <link rel="stylesheet" type="text/css" href="css/style.css" />
 <link rel="stylesheet" type="text/css" href="css/mst.css" />
+<link rel="stylesheet" type="text/css" href="css/medium-editor.css" />
+<link rel="stylesheet" type="text/css" href="css/themes/default.css" id="medium-editor-theme"/>
 </head>
 
 
@@ -36,7 +38,15 @@
     <br>
 	<form action="/admin" method="post">
   	<!-- user input-->
-  	<textarea  type="text" name="username" placeholder='Enter your post here...' rows="8" cols="80"></textarea>
+    <div id="container">
+        <textarea class="editable" type="text" name="username" placeholder='Enter your post here...' rows="8" cols="80"> </textarea>
+    </div>
+    <script src="js/medium-editor.js"></script>
+    <script>
+        var editor = new MediumEditor('.editable', {
+            buttonLabels: false
+        });
+    </script>
   	<!-- submit button -->
 	<br>
   	<input type="submit" value="Post your update!">
