@@ -48,9 +48,11 @@
 <div class="photo-box"><div class="box-content"><div><span><a href="<%=data[i].feedLink%>">N</a></span></div></div></div>
 <div class="pagePost">
 <div class="pagePostTop">
-<span class="pagePostLink"><a href="<%=data[i].feedLink%>"><%=data[i].feedTitle%></a></span><br>
-<div class="contentDiv" ><p><%-data[i].feedItem.description%></p></div>
-<a class="cd" href="<%=data[i].feedItem.link%>"><%=data[i].feedItem.pubDate%></a>
+<span class="pagePostLink"><a href="<%=data[i].link%>">Post</a></span><br>
+<div class="contentDiv" ><p><%-data[i].description%></p>
+<button type="button" id="<%=i%>">Post <%=i%></button>
+</div>
+<a class="cd" href="<%=data[i].link%>"><%=data[i].pubDate%></a>
 </div></div>
 <div class="clear"></div>
 </div>

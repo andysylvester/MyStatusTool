@@ -7,7 +7,7 @@ var fs = require('fs');
 
 var http = require('http');
 var request = require ("request");
-var myVersion = "0.40", myProductName = "testRssCloud", myPort = 2001, myDomain = "";
+var myVersion = "0.40", myProductName = "testRssCloud", myPort = 2005, myDomain = "";
 var url = "";
 var myName = "";
 var urlFeed = "";
@@ -28,7 +28,12 @@ var config = {
 		myDomain: "",
 		feedURL: "",
 		myName: "",
-		myPort: 0
+		myPort: 0,
+		thisServer: {
+			domain: "john.mystatustool.com",
+			port: 80,
+			feedUpdatedCallback: "/feedupdated"
+		}	
 };
 
 var testText = "";
@@ -56,7 +61,7 @@ var auth = function (req, res, next) {
     res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
     res.sendStatus(401);
   }
-  if (user.name === 'test1' && user.pass === 'test5a') {
+  if (user.name === 'test1' && user.pass === 'test2') {
     next();
   } else {
     res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
@@ -66,7 +71,7 @@ var auth = function (req, res, next) {
  
  
 app.get("/admin", auth, function (req, res) {
-     let rawdata = fs.readFileSync('myItems.json');
+	 let rawdata = fs.readFileSync('myFeedItems.json');
      let data = JSON.parse(rawdata);
 	 res.render('admin', { data: data, myName: config.myName, url: config.baseURL, urlFeed: config.feedURL } );
 });
@@ -97,7 +102,15 @@ app.post('/admin', auth, (req, res) => {
 	var timestampSec = Math.floor(timestamp/1000);
 	var timeString = timestampSec.toString();
 	var reversedArray = []
-    
+
+	if (req.body.postIndexInput >= 0)
+	{	
+		publishEditedPost(req.body.postIndexInput, req.body.username);
+	}
+	else
+	{
+
+
 	let rawdata = fs.readFileSync('myFeedItems.json');
     let data = JSON.parse(rawdata);
 	myFeedItems = data;
@@ -201,6 +214,7 @@ app.post('/admin', auth, (req, res) => {
 
 	});
 
+    } // finish alternate path for publishing a post
 
     console.log(myText);
     res.redirect('/admin');
@@ -210,7 +224,12 @@ app.get('/', function(req, res){
      let rawdata = fs.readFileSync('myItems.json');
      let data = JSON.parse(rawdata);
 	 res.render('index', { data: data, myName: config.myName, url: config.baseURL, urlFeed: config.feedURL });
-	// res.render('index');
+});
+
+app.get('/userposts', function(req, res){
+	 let rawdata = fs.readFileSync('myFeedItems.json');
+	 let data = JSON.parse(rawdata);
+	 res.render('userposts', { data: data, myName: config.myName, url: config.baseURL, urlFeed: config.feedURL });
 });
 
 app.get('/about', function(req, res){
@@ -250,6 +269,126 @@ app.listen(myPort, () => {
   setInterval(everyMinute, 60000); 
 })
 
+function publishEditedPost (index, newPost) { 
+	console.log("Got to publishEditedPost");
+	
+	let rawdata = fs.readFileSync('myFeedItems.json');
+	let data = JSON.parse(rawdata);
+	myFeedItems = data;
+	console.log("Selected post description: ", data[index].description);
+	console.log("Selected post text: ", data[index].text);
+	console.log("New post text: ", newPost);
+
+	// Remove paragraph tags from Medium Editor text
+	let testString = newPost;
+	var newstring1medium = testString.replace('<p>', '');
+	var newstring2medium = newstring1medium.replace('</p>', '');
+	let newPostText = newstring2medium;
+	console.log("Cleaned up Medium text = ", newPostText);
+
+	// Update post in array data with new post text
+	data[index].description = newPost;
+	data[index].text = newPostText;
+	console.log("New post description: ", data[index].description);
+	console.log("New post text: ", data[index].text);
+	
+	// Write feed JSON items to file
+	var jsonDataFeed = JSON.stringify(myFeedItems);
+	fs.writeFileSync("myFeedItems.json", jsonDataFeed);
+
+	// Read myItems file, save to object array
+	let rawMyItemsdata = fs.readFileSync('myItems.json');
+	let MyItemsdata = JSON.parse(rawMyItemsdata);
+	let myItems = MyItemsdata;
+	console.log(myItems[0]);
+
+	// Get guid of edited post
+	console.log("Selected post description: ", data[index].description);
+	console.log("Selected post guid: ", data[index].guid.value);
+	let PostGuid = data[index].guid.value;
+	
+
+	// Get index of edited post in myItems.json
+	let found = 0;
+	for (var i = 0; i < myItems.length; i++) {
+	   if (myItems[i].feedItem.guid.value == PostGuid)
+	   {
+		   found = i;
+	   }	
+	}
+	console.log("Value of found: ", found);
+	console.log("Selected post description: ", myItems[found].feedItem.description);
+	console.log("Selected post guid: ", myItems[found].feedItem.guid.value);
+	
+	// Update myItems array and save to myItems.json
+	myItems[found].feedItem.description = data[index].description;
+	myItems[found].feedItem.text = data[index].text;
+	var jsonDataFeedMain = JSON.stringify(myItems);
+	fs.writeFileSync("myItems.json", jsonDataFeedMain);
+	
+	updateStandalonePost(myItems[found].feedItem.guid.value, myItems[found].feedItem.description);
+	// removeText();
+
+	return;
+	};
+
+// Function to remove text
+function updateStandalonePost(originalText, postText) {
+
+	// Strip the timestamp part from the guid for the standalone post
+	let newText = originalText.replace(config.baseURL, '');
+	console.log(newText);
+
+	// Set pageModel elements
+	var pageModel = {
+	  content: "",
+	  name: "",
+	  baseURL: "",
+	  feedURL: ""
+	};
+	pageModel.content = postText;
+	pageModel.name = myName;
+	pageModel.baseURL = config.baseURL;
+	pageModel.feedURL = config.feedURL;
+	console.log("pageModel.content = ", pageModel.content);
+	console.log("pageModel.name = ", pageModel.name);
+	console.log("pageModel.baseURL = ", pageModel.baseURL);
+	console.log("pageModel.feedURL = ", pageModel.feedURL);
+
+	// Create path for standalone post
+	var html = "";
+	var timeStringPath = "/public/";
+	var dirPath = "";
+
+	timeStringPath = timeStringPath + newText;
+
+	var filePath = __dirname + timeStringPath + "/index.html";
+	console.log("filePath = ", filePath);
+
+	// Render post using template file
+	// Render post text using the EJS template file
+	ejs.renderFile('post_template.ejs', { model: pageModel }, {}, function(err, str){
+		console.log(str);
+		html = str;
+		// str => Rendered HTML string
+	});
+	// console.log("New standalone post text = ", html);
+
+	// Write file to directory
+		// Write file to timestamp directory
+
+			fs.writeFile(filePath, html, (err) => {
+			  if (err)
+				console.log(err);
+			  else {
+				console.log("File written successfully\n");
+			  }
+			});
+
+	return;
+
+};
+
 function readConfigFull () {
         console.log("Got to readConfig");
         fs.readFile ("config.json", function (err, data) {
@@ -273,9 +412,9 @@ function readConfigFull () {
 								urlFeed = config.feedURL;
 								headElements = config.headElements;
 								for (let i = 0; i < config.subs.length; i++) {
-									pleaseNotify (urlRssCloudServer, myDomain, myPort, "/feedupdated", config.subs[i], function (response) {
-										console.log ("\npleaseNotify: success == " + response.success + ", msg == \"" + response.msg + "\"\n");
-													});
+									console.log("sub index : ", i);
+									pleaseNotify (urlRssCloudServer, config.subs[i], config.thisServer, function (response) {
+									});
 								}
 								// getFeedContent();
 
@@ -290,37 +429,6 @@ function readConfigFull () {
         console.log("Got to end of readConfig");
         };
 
-function pleaseNotify (urlServer, domain, port, path, urlFeed, callback) {
-	var theRequest = {
-		url: urlServer,
-		headers: {Accept: "application/json"},
-		method: "POST",
-		form: {
-			domain: domain,
-			port: port,
-			path: path,
-			url1: urlFeed,
-			protocol: "http-post"
-			}
-		};
-    console.log(domain + "\n");
-    console.log(port + "\n");
-    console.log(path + "\n");
-	
-	request (theRequest, function (error, response, body) {
-		if (!error && (response.statusCode == 200)) {
-			// var serverResponse = JSON.parse (response.body);
-			var serverResponse = response.body;
-			console.log ("response:  == " + response.body + ".\n")
-			if (callback) {
-				callback (serverResponse) 
-				}
-			}
-		else {
-			console.log ("pleaseNotify: error, code == " + response.statusCode + ", " + response.body + ".\n");
-			}
-		});
-	};
 
 function pleaseNotifyTest (urlServer, domain, port, path, urlFeed, callback) {
 	var theRequest = {
@@ -415,7 +523,7 @@ function secondsSince (when) {
 function everyMinute () {
 	if (secondsSince (whenLastPleaseNotify) > (24 * 60 * 60)) {
 		for (let i = 0; i < config.subs.length; i++) {
-			pleaseNotify (urlRssCloudServer, myDomain, myPort, "/feedupdated", config.subs[i], function (response) {
+			pleaseNotify (urlRssCloudServer, config.subs[i], config.thisServer, function (response) {
 				console.log ("\npleaseNotify: success == " + response.success + ", msg == \"" + response.msg + "\"\n");
 							});
 		}
@@ -480,3 +588,75 @@ function render (postText, dirname) {
 		}
 	  });
 	};
+
+
+		function requestWithRedirect (theRequest, callback) { 
+			var myRequest = new Object ();
+			for (var x in theRequest) {
+				myRequest [x] = theRequest [x];
+				}
+			myRequest.followAllRedirects = false; 
+			myRequest.maxRedirects = (myRequest.maxRedirects === undefined) ? 0 : myRequest.maxRedirects;
+			request (myRequest, function (err, response, body) {
+				const code = response.statusCode;
+				if ((code == 301) || (code == 302)) { 
+					if (myRequest.maxRedirects == 0) {
+						callback (err, response, body);
+						}
+					else {
+						myRequest.maxRedirects--;
+						myRequest.url = response.headers.location;
+						requestWithRedirect (myRequest, callback);
+						}
+					}
+				else {
+					callback (err, response, body);
+					}
+				});
+			};
+	
+	
+		function pleaseNotify (urlCloudServer, feedUrl, thisServer, callback) { 
+			function buildParamList (paramtable) { 
+				if (paramtable === undefined) {
+					return ("");
+					}
+				else {
+					var s = "";
+					for (var x in paramtable) {
+						if (paramtable [x] !== undefined) { 
+							if (s.length > 0) {
+								s += "&";
+								}
+							s += x + "=" + encodeURIComponent (paramtable [x]);
+							}
+						}
+					return (s);
+					}
+				}
+			const theRequest = {
+				url: urlCloudServer,
+				method: "POST",
+				followAllRedirects: true, 
+				maxRedirects: 5,
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded"
+					},
+				body: buildParamList ({
+					domain: thisServer.domain, 
+					port: thisServer.port,
+					path: thisServer.feedUpdatedCallback,
+					url1: feedUrl,
+					protocol: "http-post"
+					})
+				};
+			requestWithRedirect (theRequest, function (err, response, body) {
+				if (err) {
+					callback (err);
+					}
+				else {
+					callback (undefined, body);
+					}
+				});
+			};
+			

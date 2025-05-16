@@ -31,6 +31,7 @@
 			        	<ul>
 			        		<li><a href="<%- url %>">Home</a></li>
 				        	<li><a href="<%- url %>about">About</a></li>
+				        	<li><a href="<%- url %>userposts">User Posts</a></li>
 			        		<li><a href="<%- urlFeed %>">Feed</a></li>
 			        		<li><a href="https://github.com/andysylvester/MyStatusTool">Github Repo</a></li>
 			        	</ul>
@@ -40,18 +41,43 @@
   	<!-- user input-->
     <div id="container">
         <textarea class="editable" type="text" name="username" placeholder='Enter your post here...' rows="8" cols="80"> </textarea>
-    </div>
-    <script src="js/medium-editor.js"></script>
-    <script>
-        var editor = new MediumEditor('.editable', {
-            buttonLabels: false
-        });
-    </script>
+   	    <input type="hidden" name="postIndexInput" id="MyPostIndex" value="-1">
+   </div>
   	<!-- submit button -->
 	<br>
   	<input type="submit" value="Post your update!">
 	<br>
 	</form>
+    <script src="js/medium-editor.js"></script>
+    <script>
+        var editor;
+		var postIndex = 0;
+		editor = new MediumEditor('.editable', {
+            buttonLabels: false,
+			paste: {
+                forcePlainText: false,
+				cleanPastedHTML: false
+            }
+        });
+		editor.setContent(editor.getContent() + 'This is a test of the <b>emergency</b> broadcast system');
+	function getPostText(postIndex) {
+            // var dataFromPost = "<%=data[1].description%>";
+			var test = <%- JSON.stringify(data) %>;
+			console.log("Post is: ", postIndex);
+			// console.log(test[index].description);
+			// console.log("MyPostIndex element is: ");
+			let inputF = document.getElementById("MyPostIndex");
+			inputF.value = postIndex;
+			console.log("inputF.value is: ", inputF.value);
+	   		editor.setContent(test[postIndex].description);
+			// document.getElementById(MyPostIndex).setAttribute('value', postIndex);
+	}
+    function decodeHTMLEntities(text) {
+       let textArea = document.createElement('textarea');
+       textArea.innerHTML = text;
+       return textArea.value;
+    }
+    </script>
 	<br />
          <% for(var i=0; i < data.length; i++) { %>
 		
@@ -62,8 +88,13 @@
 <div class="pagePost">
 <div class="pagePostTop">
 <span class="pagePostLink"><a href="<%=data[i].feedLink%>"><%=data[i].feedTitle%></a></span><br>
-<div class="contentDiv" ><p><%-data[i].feedItem.description%></p></div>
-<a class="cd" href="<%=data[i].feedItem.link%>"><%=data[i].feedItem.pubDate%></a>
+<div class="contentDiv" ><p><%-data[i].description%></p>
+<button type="button" onClick="getPostText(<%=i%>)" id="<%=i%>">Post <%=i%></button>
+<% if (data[i].enclosure) { %>
+  <img src="<%= data[i].feedItem.enclosure.url %>"></p>
+<% } %>
+</div>
+<a class="cd" href="<%=data[i].link%>"><%=data[i].pubDate%></a>
 </div></div>
 <div class="clear"></div>
 </div>
